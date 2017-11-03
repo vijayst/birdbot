@@ -18,17 +18,41 @@ class Bot {
     }
 
     handleMessage(req, res) {
+        console.log('processing message');
         const data = req.body;
         if (data.object === 'page') {
             data.entry.forEach(page => {
                 page.messaging.forEach(message => {
                     const senderId = message.sender.id;
-                    const { text } = message.message;
-                    console.log(senderId, message.message, text);
+                    const { text, nlp } = message.message;
+                    if (nlp) {
+                        const { entities } = nlp;
+                        console.log(entities.greetings, entities.thanks, entities.bye);
+                        if (entities.bye && entities.bye.value) {
+                            this.handleBye();
+                        } else if (entities.greetings && entities.greetings.value) {
+                            this.handleGreeting();
+                        } else if (entities.thanks && entities.thanks.value) {
+                            this.handleThanks();
+                        }
+                    }
+                    // handle image!
                 });
             })
         }
-        res.send(200);
+        res.sendStatus(200);
+    }
+
+    handleGreeting() {
+        // send our standard message
+    }
+
+    handleBye() {
+
+    }
+
+    handleThanks() {
+
     }
 }
 
