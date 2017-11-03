@@ -2,10 +2,6 @@
 const request = require('request');
 
 class Bot {
-    constructor() {
-
-    }
-
     register(req, res) {
         const { query } = req;
         const mode = query['hub.mode'];
@@ -37,7 +33,6 @@ class Bot {
                         }
                     }
                     if (attachments && attachments.length) {
-                        console.log('image file is in: ', attachments[0].payload);
                         this.handleImage(senderId, attachments[0].payload);
                     }
                 });
@@ -64,7 +59,8 @@ class Bot {
     handleImage(senderId, imageUrl) {
         // send the image to the prediction api and parse the results!
         // but for now, send a hard-coded message.
-        this.sendText(senderId, 'The bird is Eurasian Wigeon.');
+        this.sendText(senderId, 'The bird is Eurasian Wigeon.')
+            .catch(err => console.log(err));
     }
 
     sendText(id, text) {
