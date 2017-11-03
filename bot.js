@@ -25,7 +25,7 @@ class Bot {
             data.entry.forEach(page => {
                 page.messaging.forEach(message => {
                     const senderId = message.sender.id;
-                    const { text, nlp } = message.message;
+                    const { text, nlp, attachments } = message.message;
                     if (nlp) {
                         const { entities } = nlp;
                         if (entities.bye && entities.bye[0].value) {
@@ -36,7 +36,10 @@ class Bot {
                             this.handleThanks(senderId);
                         }
                     }
-                    // handle image!
+                    if (attachments && attachments.length) {
+                        console.log('image file is in: ', attachments[0].payload);
+                        this.handleImage(senderId, attachments[0].payload);
+                    }
                 });
             })
         }
@@ -56,6 +59,12 @@ class Bot {
     handleThanks(senderId) {
         this.sendText(senderId, 'You are welcome!')
             .catch(err => console.log(err));
+    }
+
+    handleImage(senderId, imageUrl) {
+        // send the image to the prediction api and parse the results!
+        // but for now, send a hard-coded message.
+        this.sendText(senderId, 'The bird is Eurasian Wigeon.');
     }
 
     sendText(id, text) {
